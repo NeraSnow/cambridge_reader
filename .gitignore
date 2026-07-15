@@ -1,0 +1,12 @@
+# Cache and local temp files
+cache/
+__pycache__/
+*.pyc
+
+# IDE configs
+.idea/
+.vscode/
+node_modules/
+package-lock.json
+android/
+ios/

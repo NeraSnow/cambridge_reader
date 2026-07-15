@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cambridge Clean Reader - 极简无广告词典</title>
+    
+    <!-- Modern Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons for premium UI -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Local High-Fidelity Stylesheets (Downloaded locally to bypass CORS and prevent FOUC) -->
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/iaw.css">
+
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-tertiary: #94a3b8;
+            --accent-color: #3b82f6;
+            --accent-light: #eff6ff;
+            --border-color: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+            --card-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+            --glass-blur: 12px;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.95);
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-tertiary: #64748b;
+            --accent-color: #60a5fa;
+            --accent-light: rgba(96, 165, 250, 0.15);
+            --border-color: #334155;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+            --card-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.4), 0 10px 10px -5px rgb(0 0 0 / 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Outfit', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            overflow-x: hidden;
+        }
+
+        /* Glassmorphism Header */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--card-bg);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 16px;
+            box-shadow: var(--shadow);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .header-container {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+
+        .logo span {
+            color: var(--text-primary);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .icon-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .icon-btn:hover, .icon-btn:active {
+            background-color: var(--accent-light);
+            color: var(--accent-color);
+        }
+
+        /* Search Section */
+        .search-section {
+            max-width: 800px;
+            width: 100%;
+            margin: 16px auto;
+            padding: 0 16px;
+        }
+
+        .search-box {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: var(--card-bg);
+            border: 1.5px solid var(--border-color);
+            border-radius: 16px;
+            padding: 4px 8px 4px 16px;
+            box-shadow: var(--shadow);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .search-box:focus-within {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px var(--accent-light);
+        }
+
+        .search-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            padding: 10px 0;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .search-input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .search-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.1s active, opacity 0.2s;
+        }
+
+        .search-btn:active {
+            transform: scale(0.95);
+        }
+
+        .search-btn:hover {
+            opacity: 0.9;
+        }
+
+        /* Main Content Container */
+        main {
+            flex: 1;
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 8px 16px 40px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* History & Favorites Side Drawer */
+        .drawer {
+            position: fixed;
+            top: 0;
+            right: -320px;
+            width: 320px;
+            height: 100%;
+            background: var(--bg-color);
+            border-left: 1px solid var(--border-color);
+            z-index: 1000;
+            box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
+            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .drawer.open {
+            right: 0;
+        }
+
+        .drawer-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .drawer-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+
+        .drawer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .drawer-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .section-title {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-tertiary);
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .word-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .word-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .word-item:hover {
+            background-color: var(--accent-light);
+        }
+
+        .word-item-text {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .delete-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-tertiary);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+        }
+
+        .delete-btn:hover {
+            color: #ef4444;
+            background-color: rgba(239, 68, 68, 0.1);
+        }
+
+        /* Dictionary Result Area Styles */
+        .result-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .top-row-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 12px 24px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .word-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .favorite-btn {
+            color: var(--text-tertiary);
+        }
+
+        .favorite-btn.active {
+            color: #f59e0b;
+            fill: #f59e0b;
+        }
+
+        /* Feedback / Info States */
+        .state-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 60px 20px;
+            background: var(--card-bg);
+            border: 1px dashed var(--border-color);
+            border-radius: 20px;
+            gap: 16px;
+        }
+
+        .state-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .state-desc {
+            color: var(--text-secondary);
+            max-width: 400px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .suggest-chip-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .suggest-chip {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .suggest-chip:hover {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+            background-color: var(--accent-light);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3.5px solid var(--border-color);
+            border-top: 3.5px solid var(--accent-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 600px) {
+            #definitionContainer {
+                padding: 16px;
+                border-radius: 16px;
+            }
+            main {
+                padding: 8px 12px 40px 12px;
+            }
+        }
+    </style>
+
+    <style id="customOverrides">
+        /* Definition container rendering raw HTML */
+        #definitionContainer {
+            width: 100%;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: var(--card-shadow);
+            box-sizing: border-box;
+            overflow-x: hidden;
+        }
+
+        /* High-fidelity CSS overrides for Cambridge Dictionary native selectors */
+        #page-content {
+            width: 100% !important;
+            max-width: 100% !important;
+            float: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            background: transparent !important;
+        }
+
+        .di-body {
+            margin-bottom: 24px !important;
+            background: transparent !important;
+        }
+
+        /* Clean advertisements, sidebars, and non-definitions */
+        .ad, .amp-ad, .i-amphtml-ad, [class*="ad-"], [id*="ad-"],
+        .hfr-m, .cdo-share, .cdo-footer, .header, .nav, .right-column,
+        .display-ad, .amp-embed, .share-buttons, .cdo-header {
+            display: none !important;
+            height: 0 !important;
+            width: 0 !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        /* Make native links styled as search hooks */
+        #definitionContainer a.query {
+            color: var(--accent-color) !important;
+            text-decoration: none !important;
+            border-bottom: 1.5px dashed var(--accent-color) !important;
+            border-radius: 3px !important;
+            padding: 0 2px !important;
+            font-weight: 500 !important;
+            transition: background-color 0.2s !important;
+        }
+
+        #definitionContainer a.query:hover {
+            background-color: var(--accent-light) !important;
+        }
+
+        /* High-fidelity overrides for native details/summary accordions */
+        .extra-examples-details {
+            margin-top: 14px !important;
+            border: 1px solid var(--border-color) !important;
+            border-radius: 12px !important;
+            background-color: var(--bg-color) !important;
+            padding: 10px 14px !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .extra-examples-summary {
+            font-size: 0.95rem !important;
+            font-weight: 700 !important;
+            color: var(--accent-color) !important;
+            cursor: pointer !important;
+            outline: none !important;
+            user-select: none !important;
+            display: list-item !important;
+        }
+
+        .extra-examples-details[open] {
+            background-color: var(--card-bg) !important;
+            padding-bottom: 14px !important;
+        }
+
+        .extra-examples-details ul {
+            margin-top: 8px !important;
+            padding-left: 16px !important;
+            list-style-type: disc !important;
+        }
+
+        .extra-examples-details li {
+            margin-bottom: 8px !important;
+            line-height: 1.4 !important;
+            color: var(--text-secondary) !important;
+        }
+
+        /* Toggle showmore/showless text based on open state */
+        .extra-examples-details .showless {
+            display: none !important;
+        }
+
+        .extra-examples-details .showmore {
+            display: inline-block !important;
+        }
+
+        .extra-examples-details[open] .showless {
+            display: inline-block !important;
+        }
+
+        .extra-examples-details[open] .showmore {
+            display: none !important;
+        }
+
+        /* Override general table spacing/color */
+        table {
+            max-width: 100% !important;
+            overflow-x: auto;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Drawer Overlay -->
+    <div class="drawer-overlay" id="drawerOverlay"></div>
+
+    <!-- Drawer: History & Favorites -->
+    <div class="drawer" id="sideDrawer">
+        <div class="drawer-header">
+            <h2 style="font-size: 1.2rem; font-weight: 700;">浏览历史 & 收藏</h2>
+            <button class="icon-btn" id="closeDrawerBtn">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+        <div class="drawer-content">
+            <h3 class="section-title">我的收藏</h3>
+            <ul class="word-list" id="favoritesList">
+                <!-- Favorites items injected here -->
+            </ul>
+
+            <h3 class="section-title">搜索历史</h3>
+            <ul class="word-list" id="historyList">
+                <!-- History items injected here -->
+            </ul>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <a href="#" class="logo" id="homeLogo">
+                <i data-lucide="book-open"></i>
+                <span>Cambridge <b>Clean</b></span>
+            </a>
+            <div class="header-actions">
+                <button class="icon-btn" id="themeToggleBtn" title="切换主题">
+                    <i data-lucide="moon" id="themeIcon"></i>
+                </button>
+                <button class="icon-btn" id="historyBtn" title="浏览历史与收藏">
+                    <i data-lucide="history"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Search Section -->
+    <div class="search-section">
+        <form id="searchForm" class="search-box" action="" onsubmit="return false;">
+            <input type="text" id="searchInput" class="search-input" placeholder="输入英语单词查询..." autocomplete="off" autofocus autocorrect="off" autocapitalize="off">
+            <button type="submit" class="search-btn">
+                <i data-lucide="search" style="width: 20px; height: 20px;"></i>
+            </button>
+        </form>
+    </div>
+
+    <!-- Main Content -->
+    <main id="mainContainer">
+        <!-- Initial / Welcome State -->
+        <div class="state-container" id="welcomeState">
+            <i data-lucide="search" style="width: 48px; height: 48px; color: var(--text-tertiary);"></i>
+            <h2 class="state-title">极简无广告 Cambridge 查词</h2>
+            <p class="state-desc">在上方输入单词，开始纯净、快速、适配手机屏幕的排版查词体验。</p>
+        </div>
+
+        <!-- Loading State -->
+        <div class="state-container" id="loadingState" style="display: none;">
+            <div class="spinner"></div>
+            <h2 class="state-title">正在获取释义...</h2>
+            <p class="state-desc">通过公共跨域代理从剑桥词典加载排版，请稍候。</p>
+        </div>
+
+        <!-- Error / Suggestions State -->
+        <div class="state-container" id="errorState" style="display: none;">
+            <i data-lucide="alert-circle" style="width: 48px; height: 48px; color: #ef4444;"></i>
+            <h2 class="state-title" id="errorTitle">未找到单词</h2>
+            <p class="state-desc" id="errorDesc">请检查拼写是否正确。</p>
+            <div class="suggest-chip-container" id="suggestionsContainer">
+                <!-- Suggestions chips here -->
+            </div>
+        </div>
+
+        <!-- Dictionary Definition Result Area -->
+        <div class="result-container" id="resultContainer" style="display: none;">
+            <!-- Top Controls Row -->
+            <div class="top-row-card">
+                <span class="word-title" id="wordTitle">sink</span>
+                <button class="icon-btn favorite-btn" id="favoriteBtn" title="加入收藏">
+                    <i data-lucide="star" id="favoriteIcon"></i>
+                </button>
+            </div>
+
+            <!-- Definition body directly injecting the scraped HTML -->
+            <div id="definitionContainer"></div>
+        </div>
+    </main>
+
+    <script>
+        // App State
+        let currentWord = "";
+        let favorites = JSON.parse(localStorage.getItem('cc_favorites') || '[]');
+        let historyList = JSON.parse(localStorage.getItem('cc_history') || '[]');
+        let currentTheme = localStorage.getItem('cc_theme') || 'light';
+
+        // Elements
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        const themeIcon = document.getElementById('themeIcon');
+        const historyBtn = document.getElementById('historyBtn');
+        const sideDrawer = document.getElementById('sideDrawer');
+        const drawerOverlay = document.getElementById('drawerOverlay');
+        const closeDrawerBtn = document.getElementById('closeDrawerBtn');
+        const searchForm = document.getElementById('searchForm');
+        const searchInput = document.getElementById('searchInput');
+        const homeLogo = document.getElementById('homeLogo');
+
+        const welcomeState = document.getElementById('welcomeState');
+        const loadingState = document.getElementById('loadingState');
+        const errorState = document.getElementById('errorState');
+        const errorTitle = document.getElementById('errorTitle');
+        const errorDesc = document.getElementById('errorDesc');
+        const suggestionsContainer = document.getElementById('suggestionsContainer');
+        
+        const resultContainer = document.getElementById('resultContainer');
+        const wordTitle = document.getElementById('wordTitle');
+        const favoriteBtn = document.getElementById('favoriteBtn');
+        const favoriteIcon = document.getElementById('favoriteIcon');
+        const definitionContainer = document.getElementById('definitionContainer');
+
+        const favoritesList = document.getElementById('favoritesList');
+        const historyListEl = document.getElementById('historyList');
+
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Theme management
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('cc_theme', theme);
+            if (theme === 'dark') {
+                themeIcon.setAttribute('data-lucide', 'sun');
+            } else {
+                themeIcon.setAttribute('data-lucide', 'moon');
+            }
+            lucide.createIcons();
+            currentTheme = theme;
+        }
+        setTheme(currentTheme);
+
+        themeToggleBtn.addEventListener('click', () => {
+            setTheme(currentTheme === 'light' ? 'dark' : 'light');
+        });
+
+        // Drawer logic
+        function toggleDrawer(open) {
+            if (open) {
+                renderDrawerLists();
+                sideDrawer.classList.add('open');
+                drawerOverlay.classList.add('open');
+            } else {
+                sideDrawer.classList.remove('open');
+                drawerOverlay.classList.remove('open');
+            }
+        }
+
+        historyBtn.addEventListener('click', () => toggleDrawer(true));
+        closeDrawerBtn.addEventListener('click', () => toggleDrawer(false));
+        drawerOverlay.addEventListener('click', () => toggleDrawer(false));
+
+        // Reset view to logo
+        homeLogo.addEventListener('click', (e) => {
+            e.preventDefault();
+            searchInput.value = "";
+            currentWord = "";
+            showState(welcomeState);
+        });
+
+        // History and Favorites Lists management
+        function renderDrawerLists() {
+            // Favorites
+            favoritesList.innerHTML = favorites.length === 0 
+                ? '<li style="color: var(--text-tertiary); padding: 12px; font-size: 0.9rem;">暂无收藏单词</li>' 
+                : favorites.map(word => `
+                    <li class="word-item" onclick="searchWord('${word}')">
+                        <span class="word-item-text">${word}</span>
+                        <button class="delete-btn" onclick="event.stopPropagation(); removeFavorite('${word}')">
+                            <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i>
+                        </button>
+                    </li>
+                `).join('');
+
+            // History
+            historyListEl.innerHTML = historyList.length === 0
+                ? '<li style="color: var(--text-tertiary); padding: 12px; font-size: 0.9rem;">暂无搜索历史</li>'
+                : historyList.map(word => `
+                    <li class="word-item" onclick="searchWord('${word}')">
+                        <span class="word-item-text">${word}</span>
+                        <button class="delete-btn" onclick="event.stopPropagation(); removeHistory('${word}')">
+                            <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i>
+                        </button>
+                    </li>
+                `).join('');
+            
+            lucide.createIcons();
+        }
+
+        function addHistory(word) {
+            historyList = historyList.filter(w => w !== word);
+            historyList.unshift(word);
+            if (historyList.length > 50) historyList.pop();
+            localStorage.setItem('cc_history', JSON.stringify(historyList));
+        }
+
+        function removeHistory(word) {
+            historyList = historyList.filter(w => w !== word);
+            localStorage.setItem('cc_history', JSON.stringify(historyList));
+            renderDrawerLists();
+        }
+
+        function toggleFavorite(word) {
+            if (favorites.includes(word)) {
+                favorites = favorites.filter(w => w !== word);
+                favoriteIcon.classList.remove('active');
+                favoriteIcon.setAttribute('fill', 'none');
+            } else {
+                favorites.push(word);
+                favoriteIcon.classList.add('active');
+                favoriteIcon.setAttribute('fill', '#f59e0b');
+            }
+            localStorage.setItem('cc_favorites', JSON.stringify(favorites));
+            renderDrawerLists();
+        }
+
+        function removeFavorite(word) {
+            favorites = favorites.filter(w => w !== word);
+            localStorage.setItem('cc_favorites', JSON.stringify(favorites));
+            if (currentWord === word) {
+                favoriteIcon.classList.remove('active');
+                favoriteIcon.setAttribute('fill', 'none');
+            }
+            renderDrawerLists();
+        }
+
+        favoriteBtn.addEventListener('click', () => {
+            if (currentWord) toggleFavorite(currentWord);
+        });
+
+        // Search trigger
+        searchForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const word = searchInput.value.trim();
+            if (word) {
+                searchWord(word);
+            }
+        });
+
+        // Show different view states
+        function showState(stateEl) {
+            welcomeState.style.display = 'none';
+            loadingState.style.display = 'none';
+            errorState.style.display = 'none';
+            resultContainer.style.display = 'none';
+            
+            stateEl.style.display = 'flex';
+            if (stateEl === resultContainer) {
+                resultContainer.style.display = 'flex';
+            }
+        }
+
+        // Fetch Word HTML via Direct Fetch (for Mobile WebView) with CORS Proxies fallbacks
+        function fetchWordHtml(word) {
+            const cambridgeUrl = `https://dictionary.cambridge.org/zhs/%E8%AF%8D%E5%85%B8/%E8%8B%B1%E8%AF%AD-%E6%B1%89%E8%AF%AD-%E7%AE%80%E4%BD%93/${encodeURIComponent(word.toLowerCase())}`;
+            
+            // Try 1: Direct Fetch (works in Mobile App WebView and Capacitor Native HTTP)
+            return fetch(cambridgeUrl)
+                .then(res => {
+                    if (!res.ok) throw new Error("Direct fetch failed");
+                    return res.text();
+                })
+                .catch(err => {
+                    console.log("Direct fetch failed or blocked by CORS, trying CORS proxies...", err);
+                    
+                    // Try 2: Primary Proxy (corsproxy.io)
+                    const primaryUrl = `https://corsproxy.io/?${encodeURIComponent(cambridgeUrl)}`;
+                    return fetch(primaryUrl)
+                        .then(res => {
+                            if (!res.ok) throw new Error("Primary CORS proxy failed");
+                            return res.text();
+                        })
+                        .catch(proxyErr => {
+                            console.warn("Primary CORS proxy failed, trying fallback...", proxyErr);
+                            
+                            // Try 3: Fallback Proxy (allorigins.win)
+                            const fallbackUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(cambridgeUrl)}`;
+                            return fetch(fallbackUrl)
+                                .then(res => {
+                                    if (!res.ok) throw new Error("Allorigins fallback CORS proxy failed");
+                                    return res.json();
+                                })
+                                .then(data => {
+                                    if (!data.contents) throw new Error("No contents returned from fallback proxy");
+                                    return data.contents;
+                                });
+                        });
+                });
+        }
+
+        // Clean raw HTML in the client-side DOM
+        function cleanHtml(htmlStr) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(htmlStr, 'text/html');
+            const pageContent = doc.getElementById('page-content');
+            
+            if (!pageContent) return null;
+            
+            // 1. Remove all script tags
+            pageContent.querySelectorAll('script').forEach(el => el.remove());
+            
+            // 2. Clean advertisement elements
+            const adSelectors = [
+                '.ad', '.amp-ad', '.i-amphtml-ad', '.display-ad', '.amp-embed', '.contentslot', '.am-default_moreslots',
+                '[class*="ad-"]', '[id*="ad-"]', '[id*="google_ads"]', '[id*="contentslot"]'
+            ];
+            adSelectors.forEach(sel => {
+                pageContent.querySelectorAll(sel).forEach(el => el.remove());
+            });
+            
+            // 3. Clean user-requested useless elements:
+            pageContent.querySelectorAll('.lcs.bh').forEach(el => el.remove());
+            pageContent.querySelectorAll('.hax').forEach(el => {
+                // Remove wordlist buttons (dwl) and helper question cards (hao/hbtn)
+                if (el.classList.contains('dwl') || el.querySelector('.hao') || el.querySelector('.hbtn')) {
+                    el.remove();
+                }
+            });
+            
+            // 4. Convert amp-accordion to native HTML5 details/summary tags
+            pageContent.querySelectorAll('amp-accordion').forEach(accordion => {
+                const section = accordion.querySelector('section');
+                if (!section) return;
+                
+                const details = doc.createElement('details');
+                details.className = 'extra-examples-details';
+                
+                const header = section.querySelector('header');
+                if (header) {
+                    const summary = doc.createElement('summary');
+                    summary.className = 'extra-examples-summary';
+                    while (header.firstChild) {
+                        summary.appendChild(header.firstChild);
+                    }
+                    details.appendChild(summary);
+                    header.remove();
+                }
+                
+                while (section.firstChild) {
+                    details.appendChild(section.firstChild);
+                }
+                
+                accordion.parentNode.replaceChild(details, accordion);
+            });
+            
+            // 5. Rewrite dictionary hyperlinks to point locally: /?word=WORD
+            pageContent.querySelectorAll('a').forEach(a => {
+                const href = a.getAttribute('href') || '';
+                if (href.includes('/dictionary/') || href.includes('/%E8%AF%8D%E5%85%B8/') || href.includes('dictionary.cambridge.org')) {
+                    try {
+                        const targetUrl = new URL(href, 'https://dictionary.cambridge.org');
+                        const parts = targetUrl.pathname.split('/');
+                        let targetWord = parts.pop() || parts.pop();
+                        
+                        targetWord = decodeURIComponent(targetWord);
+                        if (targetWord && !targetWord.match(/\.(css|js|png|jpg|mp3|ogg|woff|woff2)$/i)) {
+                            a.setAttribute('href', `?word=${targetWord}`);
+                            a.classList.add('clean-query-link');
+                        }
+                    } catch(e) {
+                        console.error("Link rewriting failed:", e);
+                    }
+                }
+            });
+            
+            // 6. Rewrite audio sources to absolute Cambridge CDN paths
+            pageContent.querySelectorAll('audio').forEach(audio => {
+                audio.querySelectorAll('source').forEach(source => {
+                    const src = source.getAttribute('src') || '';
+                    if (src.startsWith('/')) {
+                        source.setAttribute('src', `https://dictionary.cambridge.org${src}`);
+                    }
+                });
+            });
+            
+            pageContent.querySelectorAll('[data-src-mp3]').forEach(el => {
+                const src = el.getAttribute('data-src-mp3') || '';
+                if (src.startsWith('/')) {
+                    el.setAttribute('data-src-mp3', `https://dictionary.cambridge.org${src}`);
+                }
+            });
+            
+            pageContent.querySelectorAll('[data-src-ogg]').forEach(el => {
+                const src = el.getAttribute('data-src-ogg') || '';
+                if (src.startsWith('/')) {
+                    el.setAttribute('data-src-ogg', `https://dictionary.cambridge.org${src}`);
+                }
+            });
+            
+            return pageContent.innerHTML;
+        }
+
+        // Search Word
+        function searchWord(word) {
+            word = word.trim().toLowerCase();
+            searchInput.value = word;
+            toggleDrawer(false);
+            showState(loadingState);
+            
+            // Check client-side localStorage cache first
+            const cacheKey = `cc_cache_${word}`;
+            const cachedHtml = localStorage.getItem(cacheKey);
+            if (cachedHtml) {
+                renderResult(word, cachedHtml);
+                return;
+            }
+            
+            fetchWordHtml(word)
+                .then(htmlStr => {
+                    const cleaned = cleanHtml(htmlStr);
+                    if (!cleaned) {
+                        // Extract spell suggestions from raw HTML if possible
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = htmlStr;
+                        const ulSuggest = tempDiv.querySelector('.prefix-suggestions');
+                        let suggestions = [];
+                        if (ulSuggest) {
+                            suggestions = Array.from(ulSuggest.querySelectorAll('a')).map(a => a.textContent.trim()).filter(t => t);
+                        }
+                        throw { error: "Word not found directly.", suggestions: suggestions.slice(0, 10) };
+                    }
+                    
+                    // Save to local cache
+                    try {
+                        localStorage.setItem(cacheKey, cleaned);
+                    } catch(e) {
+                        // If quota is full, prune localStorage cache
+                        console.warn("LocalStorage full, pruning cache...", e);
+                        pruneLocalCache();
+                        try {
+                            localStorage.setItem(cacheKey, cleaned);
+                        } catch(err) {
+                            console.error("Failed to save cache even after pruning:", err);
+                        }
+                    }
+                    
+                    renderResult(word, cleaned);
+                })
+                .catch(err => {
+                    console.error(err);
+                    const msg = err.error || "获取定义失败，请检查网络或单词拼写。";
+                    showError(msg, err.suggestions || []);
+                });
+        }
+
+        // Prune LocalStorage Cache by deleting old cc_cache_* entries
+        function pruneLocalCache() {
+            const keys = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('cc_cache_')) {
+                    keys.push(key);
+                }
+            }
+            // Simple approach: clear all cache entries when full
+            keys.forEach(k => localStorage.removeItem(k));
+        }
+
+        function showError(msg, suggestions = []) {
+            errorTitle.textContent = "未找到单词或发生错误";
+            errorDesc.textContent = msg;
+            
+            if (suggestions && suggestions.length > 0) {
+                suggestionsContainer.innerHTML = suggestions.map(word => `
+                    <button class="suggest-chip" onclick="searchWord('${word}')">${word}</button>
+                `).join('');
+            } else {
+                suggestionsContainer.innerHTML = "";
+            }
+            showState(errorState);
+        }
+
+        function renderResult(word, html) {
+            currentWord = word;
+            addHistory(currentWord);
+
+            // Set Title & Favorite status
+            wordTitle.textContent = currentWord;
+            if (favorites.includes(currentWord)) {
+                favoriteIcon.classList.add('active');
+                favoriteIcon.setAttribute('fill', '#f59e0b');
+            } else {
+                favoriteIcon.classList.remove('active');
+                favoriteIcon.setAttribute('fill', 'none');
+            }
+
+            // Directly inject raw HTML
+            definitionContainer.innerHTML = html;
+
+            showState(resultContainer);
+            lucide.createIcons();
+            
+            // Scroll results to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Click Interception: route local query links internally
+        document.addEventListener('click', function(e) {
+            const a = e.target.closest('a');
+            if (a && a.href) {
+                const urlStr = a.getAttribute('href') || '';
+                
+                // Do not intercept audio buttons, anchors, or javascript actions
+                if (urlStr.startsWith('javascript:') || urlStr.startsWith('#') || a.closest('.audio_play_button') || a.closest('.daud')) {
+                    return;
+                }
+                
+                try {
+                    const url = new URL(a.href);
+                    // Only intercept if it's on our origin and has the 'word' query param
+                    if (url.origin === window.location.origin && url.searchParams.has('word')) {
+                        // Check if the user held any modifier keys (Ctrl, Shift, Alt, Meta)
+                        if (!e.ctrlKey && !e.shiftKey && !e.altKey && !e.metaKey) {
+                            e.preventDefault();
+                            const word = url.searchParams.get('word');
+                            searchWord(word);
+                        }
+                    }
+                } catch(err) {
+                    console.error("Error routing click:", err);
+                }
+            }
+        });
+
+        // Initialize search from URL query parameter on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const word = urlParams.get('word');
+            if (word) {
+                searchWord(word);
+            }
+        });
+    </script>
+</body>
+</html>
