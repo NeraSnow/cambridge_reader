@@ -24,7 +24,7 @@ jobs:
 
     - name: Initialize Capacitor
       run: |
-        npx cap init "Cambridge Clean" "com.cambridge.cleanreader" --web-dir=.
+        npx cap init "Cambridge Clean" "com.cambridge.cleanreader" --web-dir=www
         npx cap add android
         npx cap sync
 
